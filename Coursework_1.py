@@ -502,8 +502,8 @@ for i in range(1, k):
     centroid_array_20 = k_means_20.cluster_centers_
 
     # evaluation metrics
-    mean_accuracy_20[i - 1] = accuracy_score(y_test, k_means_predict_20)
-    std_accuracy_20[i - 1] = np.std(k_means_predict_20 == y_test5) / np.sqrt(k_means_predict_20.shape[0])
+    mean_accuracy_20[i - 1] = accuracy_score(y_test20, k_means_predict_20)
+    std_accuracy_20[i - 1] = np.std(k_means_predict_20 == y_test20) / np.sqrt(k_means_predict_20.shape[0])
 
 print("\nThe mean of accuracy is: ")
 print(mean_accuracy_20)
@@ -521,7 +521,37 @@ plt.show()
 print("\nThe best accuracy was with", mean_accuracy_20.max(), "with k=", mean_accuracy_20.argmax()+1)
 print("===================================================================================")
 
+# implementing Gaussain Mixture (EM soft clustering)
 
+from sklearn.mixture import GaussianMixture
+
+mean_accuracy_gmm = np.zeros((k - 1))
+std_accuracy_gmm = np.zeros((k - 1))
+
+print("Clustering using Gaussian Mixture Model...")
+
+for i in range(1,30):
+    gaussian_mixture_full_dataset = GaussianMixture(n_components=i)
+    print("GMM for {0}...".format(i))
+    gaussian_mixture_full_dataset.fit(x_train)
+    gaussian_mixture_full_dataset_predict = gaussian_mixture_full_dataset.predict(x_test)
+
+    mean_accuracy_gmm[i - 1] = accuracy_score(y_test, gaussian_mixture_full_dataset_predict)
+    std_accuracy_gmm[i - 1] = np.std(gaussian_mixture_full_dataset_predict == y_test) / np.sqrt(gaussian_mixture_full_dataset_predict.shape[0])
+
+    # plt.scatter(x_train[:, 0], x_train[:, 1], c=gaussian_mixture_full_dataset_predict, s=40, cmap='viridis');
+
+print("\nThe mean of accuracy is: ")
+print(mean_accuracy_gmm)
+print("\nThe SD of accuracy is: ")
+print(std_accuracy_gmm)
+
+print("\nThe best accuracy was with", mean_accuracy_gmm.max(), "with k=", mean_accuracy_gmm.argmax()+1)
+
+probs_gmm = gaussian_mixture_full_dataset.predict_proba(x_train)
+print("Gaussian Model probabilities: \n")
+print(probs_gmm[:5].round(3))
+print("==================================================================================")
 
 
 
